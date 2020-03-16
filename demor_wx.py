@@ -112,6 +112,7 @@ class Demor(wx.Frame):
         stat = self.DemoLoaded()
         if not stat:
             return
+        self.SaveButton.SetLabel('Saving...')
         replay_dir = os.path.join(self.tf, 'replay/client/replays')
         if not os.path.exists(replay_dir):
             os.makedirs(replay_dir)
@@ -121,6 +122,7 @@ class Demor(wx.Frame):
             shutil.copy2(src, dest)
         rid = demor.last_replay(self.tf) + 1
         demor.write_replay(self.tf, rid, self.demo_file, title)
+        self.SaveButton.SetLabel('Save Replay')
         dlg = wx.MessageDialog(self, 'New replay clip saved.\nLaunch or restart tf2 to check your replay.', 'Success', wx.ICON_INFORMATION)
         dlg.ShowModal()
         dlg.Destroy()
