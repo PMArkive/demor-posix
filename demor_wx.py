@@ -1,10 +1,9 @@
 # -*- coding: utf-8 -*-
 import os
+import shutil
 
-import pythoncom
 import wx
 import wx.xrc
-from win32com.shell import shell
 
 import demor
 import tf2dem
@@ -113,17 +112,13 @@ class Demor(wx.Frame):
         stat = self.DemoLoaded()
         if not stat:
             return
-        replay_dir = os.path.join(self.tf, r'replay\client\replays')
+        replay_dir = os.path.join(self.tf, 'replay/client/replays')
         if not os.path.exists(replay_dir):
             os.makedirs(replay_dir)
         src = os.path.abspath(self.demo_file.file_name)
         dest = os.path.abspath(os.path.join(replay_dir, self.demo_file.base_name))
         if src.lower() != dest.lower():
-            pfo = pythoncom.CoCreateInstance(shell.CLSID_FileOperation, None, pythoncom.CLSCTX_ALL, shell.IID_IFileOperation)
-            src_s = shell.SHCreateItemFromParsingName(src, None, shell.IID_IShellItem)
-            dest_s = shell.SHCreateItemFromParsingName(replay_dir, None, shell.IID_IShellItem)
-            pfo.CopyItem(src_s, dest_s)
-            pfo.PerformOperations()
+            shutil.copy2(src, dest)
         rid = demor.last_replay(self.tf) + 1
         demor.write_replay(self.tf, rid, self.demo_file, title)
         dlg = wx.MessageDialog(self, 'New replay clip saved.\nLaunch or restart tf2 to check your replay.', 'Success', wx.ICON_INFORMATION)
